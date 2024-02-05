@@ -35,7 +35,6 @@ services:
 
   db:
     image: postgres:latest
-    hostname: db
     environment:
       - POSTGRES_PASSWORD=123
       - POSTGRES_USER=admin
@@ -49,14 +48,3 @@ services:
         limits:
           cpus: "0.63"
           memory: "140MB"
-
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_LISTEN_PORT: 5050
-    ports:
-      - 5050:5050
-    depends_on:
-      - db

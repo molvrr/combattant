@@ -31,7 +31,9 @@ module Q = struct
     [%rapper
       get_opt
         {sql|
-          SELECT @int{id}, @int{mov_limit} FROM clients WHERE id = %int{id}
+          SELECT clients.id as @int{id}, @int{mov_limit}, value as @int{balance} FROM clients
+          JOIN balances ON balances.client_id = %int{id}
+          WHERE clients.id = %int{id}
         |sql}
         record_out]
   ;;
@@ -47,14 +49,19 @@ end
 
 let ( let* ) = Result.bind
 
-let execute_operation ~client_id ~(op : Operation.t) conn =
+(* TODO: Separar em duas funções *)
+let execute_transaction ~client_id ~(op : Operation.transaction_op) conn =
   match op with
-  | Transaction { value; description; transaction_type } ->
-    let* () = Q.transaction ~client_id ~value ~description conn ~transaction_type in
-    (match transaction_type with
-     | Credit -> Q.credit ~value ~client_id conn
-     | Debit -> Q.debit ~value ~client_id conn)
-  | _ -> failwith "TODO"
+  | `Credit { value; description } ->
+    let* () =
+      Q.transaction ~client_id ~value ~description conn ~transaction_type:`Credit
+    in
+    Q.credit ~value ~client_id conn
+  | `Debit { value; description } ->
+    let* () =
+      Q.transaction ~client_id ~value ~description conn ~transaction_type:`Debit
+    in
+    Q.debit ~value ~client_id conn
 ;;
 
 let find_client id conn = Q.client ~id conn
