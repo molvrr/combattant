@@ -5,8 +5,6 @@ services:
     image: rinha:latest
     environment:
       - DB_HOST=db
-    ports:
-      - 8081:8080
     depends_on:
       - db
     deploy:
@@ -19,8 +17,6 @@ services:
     <<: *api
     environment:
       - DB_HOST=db
-    ports:
-      - 8082:8080
 
   nginx:
     image: nginx:latest

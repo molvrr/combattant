@@ -11,8 +11,8 @@ CREATE TABLE transactions (
   client_id INTEGER REFERENCES clients,
   value INTEGER NOT NULL,
   type transaction_type NOT NULL,
-  description VARCHAR(10) NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+  description VARCHAR(255) NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE balances (

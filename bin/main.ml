@@ -1,12 +1,9 @@
-[@@@warning "-26-27-32"]
-
-open! StdLabels
 open Eio
 open Piaf
 
 let request_handler ~db_pool Server.{ request; _ } =
   match Rinha.Router.match_route request.meth request.target with
-  | Some handler -> handler db_pool request
+  | Some handler -> Result.get_ok @@ handler db_pool request
   | None -> Response.create `Not_found
 ;;
 
@@ -25,7 +22,8 @@ let () =
     Uri.make ~scheme:"postgres" ~userinfo:"admin:123" ~host:"db" ~path:"rinha" ()
   in
   let db_pool =
-    Result.get_ok @@ Caqti_eio.connect_pool ~sw ~stdenv:(env :> Caqti_eio.stdenv) db_uri
+    Result.get_ok
+    @@ Caqti_eio_unix.connect_pool ~sw ~stdenv:(env :> Caqti_eio.stdenv) db_uri
   in
   let server = Server.create ~config (request_handler ~db_pool) in
   ignore @@ Server.Command.start ~sw env server
