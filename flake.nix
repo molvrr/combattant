@@ -20,8 +20,8 @@
 
         pkgs' = pkgs.pkgsCross.musl64;
 
-        rinhadebackend = pkgs'.ocamlPackages.buildDunePackage {
-          pname = "rinhadebackend";
+        rinha = pkgs'.ocamlPackages.buildDunePackage {
+          pname = "rinha";
           version = "0.0.1";
           src = ./.;
           buildInputs = with pkgs'.ocamlPackages; [
@@ -48,21 +48,21 @@
             ocamlformat
           ];
 
-          buildInputs = rinhadebackend.buildInputs
+          buildInputs = rinha.buildInputs
             ++ (with pkgs'.ocamlPackages; [ utop ]);
         };
 
-        packages.default = rinhadebackend;
+        packages.default = rinha;
 
-        packages.docker = pkgs'.dockerTools.buildImage {
-          name = "ghcr.io/molvrr/rinhadebackend";
+        packages.docker = pkgs.dockerTools.buildImage {
+          name = "rinha";
           tag = "latest";
-          copyToRoot = pkgs'.buildEnv {
+          copyToRoot = pkgs.buildEnv {
             name = "image-root";
-            paths = [ pkgs'.bashInteractive pkgs'.coreutils pkgs'.curl rinhadebackend ];
+            paths = [ pkgs.bashInteractive pkgs.coreutils pkgs.curl rinha ];
             pathsToLink = [ "/bin" ];
           };
-          config = { Cmd = [ "rinhadebackend" ]; };
+          config = { Cmd = [ "rinha" ]; };
         };
 
         formatter = pkgs.nixfmt;

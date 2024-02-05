@@ -1,10 +1,10 @@
 (executable
- (public_name rinhadebackend)
+ (public_name rinha)
  (name main)
  (flags
    (:standard -cclib -static -cclib -no-pie))
  (libraries
-   rinhadebackend
+   rinha
 
    piaf
    routes

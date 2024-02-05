@@ -1,2 +1,3 @@
 (library
- (name rinhadebackend))
+ (name rinha)
+ (libraries piaf routes yojson))

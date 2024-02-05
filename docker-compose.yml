@@ -2,7 +2,7 @@ version: '3.5'
 
 services:
   api01: &api
-    image: rinhadebackend:latest
+    image: rinha:latest
     environment:
       - DB_HOST=db
     ports:
