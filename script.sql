@@ -1,14 +1,14 @@
 CREATE TABLE clients (
   id SERIAL PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
-  limit INTEGER NOT NULL
+  mov_limit INTEGER NOT NULL
 );
 
-CREATE TYPE transaction_type AS ENUM ('c', 'd');
+CREATE TYPE transaction_type AS ENUM ('credit', 'debit');
 
 CREATE TABLE transactions (
   id SERIAL PRIMARY KEY,
-  client_id REFERENCES clients,
+  client_id INTEGER REFERENCES clients,
   value INTEGER NOT NULL,
   type transaction_type NOT NULL,
   description VARCHAR(10) NOT NULL,
@@ -17,12 +17,13 @@ CREATE TABLE transactions (
 
 CREATE TABLE balances (
   id SERIAL PRIMARY KEY,
-  client_id REFERENCES clients,
+  client_id INTEGER REFERENCES clients,
   value INTEGER NOT NULL
 );
 
+DO $$
 BEGIN
-  INSERT INTO clients (name, limit)
+  INSERT INTO clients (name, mov_limit)
   VALUES
       ('naruto', 1000 * 100),
       ('mob', 800 * 100),
@@ -31,3 +32,4 @@ BEGIN
   INSERT INTO balances (client_id, value)
       SELECT id, 0 FROM clients;
 END;
+$$

@@ -5,17 +5,9 @@
    (:standard -cclib -static -cclib -no-pie))
  (libraries
    rinha
-
    piaf
    routes
    eio_main
-   caqti-driver-postgresql
    logs.fmt
    fmt.tty
-   logs.threaded
-   caqti-eio
-   caqti
-   ppx_rapper_eio)
-
- (preprocess
-  (pps ppx_rapper)))
+   logs.threaded))

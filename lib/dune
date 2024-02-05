@@ -1,3 +1,5 @@
 (library
  (name rinha)
- (libraries piaf routes yojson))
+ (libraries piaf routes yojson caqti caqti-driver-postgresql caqti-eio ppx_rapper_eio)
+ (preprocess
+  (pps ppx_rapper)))

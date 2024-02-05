@@ -14,16 +14,35 @@ module R = Map.Make (struct
     ;;
   end)
 
-let transactions_route =
-  let handler client_id (request : Request.t) =
-    let json : Yojson.Safe.t = `Assoc [ "limite", `Int 100000; "saldo", `Int (-9098) ] in
-    Response.of_string ~body:(Yojson.Safe.to_string json) `OK
-  in
-  (s "clientes" / int / s "transacoes" /? nil) @--> handler
-;;
+module Handler = struct
+  let transaction client_id (db_pool : Query.pool) (request : Request.t) =
+    let client_opt =
+      Option.join @@ Result.to_option @@ Query.find_client client_id db_pool
+    in
+    match client_opt with
+    | Some client ->
+      let insert_result =
+        let body = Result.to_option @@ Body.to_string request.body in
+        let json = Option.map Yojson.Safe.from_string body in
+        let decoded_op = Option.bind json (Utils.Decoder.decode Operation.decoder) in
+        match decoded_op with
+        | Some op ->
+          (match Query.execute_operation ~client_id ~op db_pool with
+           | Ok _ as ok -> ok
+           | Error e -> Error (`DB e))
+        | None -> Error (`Decoder "Invalid operation")
+      in
+      (match insert_result with
+       | Ok () ->
+         let json : Yojson.Safe.t =
+           `Assoc [ "limite", `Int 100000; "saldo", `Int (-9098) ]
+         in
+         Response.of_string ~body:(Yojson.Safe.to_string json) `OK
+       | Error _ -> Response.create (`Code 422))
+    | None -> Response.create `Not_found
+  ;;
 
-let balance_route =
-  let handler client_id (request : Request.t) =
+  let balance client_id (db_pool : Query.pool) (request : Request.t) =
     let json : Yojson.Safe.t =
       let balance =
         let total = `Int (-9098) in
@@ -35,15 +54,16 @@ let balance_route =
       `Assoc [ "saldo", balance; "ultimas_transacoes", last_transactions ]
     in
     Response.of_string ~body:(Yojson.Safe.to_string json) `OK
-  in
-  (s "clientes" / int / s "extrato" /? nil) @--> handler
-;;
+  ;;
+end
 
 let routes =
   List.fold_left
     ~f:(fun acc (v, r) -> R.add_to_list v r acc)
-    [ `GET, balance_route; `POST, transactions_route; `POST, balance_route ]
     ~init:R.empty
+    [ `GET, (s "clientes" / int / s "extrato" /? nil) @--> Handler.balance
+    ; `POST, (s "clientes" / int / s "transacoes" /? nil) @--> Handler.transaction
+    ]
 ;;
 
 let router = R.map one_of routes
