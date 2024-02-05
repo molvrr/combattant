@@ -10,8 +10,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.45"
-          memory: "200mb"
+          cpus: "0.20"
+          memory: "150mb"
 
   api02:
     <<: *api
@@ -31,7 +31,7 @@ services:
       resources:
         limits:
           cpus: "0.17"
-          memory: "10MB"
+          memory: "110MB"
 
   db:
     image: postgres:latest
@@ -47,5 +47,16 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.13"
+          cpus: "0.63"
           memory: "140MB"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 5050
+    ports:
+      - 5050:5050
+    depends_on:
+      - db

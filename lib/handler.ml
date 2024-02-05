@@ -26,7 +26,9 @@ let create_transaction client_id (db_pool : Query.pool) (request : Request.t) =
            in
            Ok (Response.of_string ~body:(Yojson.Safe.to_string json) `OK)
          | Error _ -> Ok (Response.create (`Code 422)))
-      | None -> Ok (Response.create `Not_found))
+      | None ->
+        Logs.info (fun m -> m "Não encontrei o cliente %d" client_id);
+        Ok (Response.create `Not_found))
     db_pool
 ;;
 
@@ -57,7 +59,11 @@ let get_balance client_id (db_pool : Query.pool) (_request : Request.t) =
              `Assoc [ "saldo", balance; "ultimas_transacoes", last_transactions ]
            in
            Ok (Response.of_string ~body:(Yojson.Safe.to_string json) `OK)
-         | None -> Ok (Response.create `Not_found))
-      | None -> Ok (Response.create `Not_found))
+         | None ->
+           Logs.info (fun m -> m "Não encontrei o extrato do cliente %d" client_id);
+           Ok (Response.create `Not_found))
+      | None ->
+        Logs.info (fun m -> m "Não encontrei o cliente %d" client_id);
+        Ok (Response.create `Not_found))
     db_pool
 ;;

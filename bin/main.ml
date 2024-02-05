@@ -1,13 +1,23 @@
 open Eio
 open Piaf
 
+let setup_log ?style_renderer level =
+  Logs_threaded.enable ();
+  Fmt_tty.setup_std_outputs ?style_renderer ();
+  Logs.set_level ~all:true level;
+  Logs.set_reporter (Logs_fmt.reporter ())
+;;
+
 let request_handler ~db_pool Server.{ request; _ } =
   match Rinha.Router.match_route request.meth request.target with
   | Some handler -> Result.get_ok @@ handler db_pool request
-  | None -> Response.create `Not_found
+  | None ->
+    Logs.info (fun d -> d "Não encontrei %S\n" request.target);
+    Response.create `Not_found
 ;;
 
 let () =
+  setup_log (Some Logs.Info);
   Eio_main.run
   @@ fun env ->
   Switch.run
