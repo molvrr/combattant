@@ -1,0 +1,21 @@
+(executable
+ (public_name rinhadebackend)
+ (name main)
+ (flags
+   (:standard -cclib -static -cclib -no-pie))
+ (libraries
+   rinhadebackend
+
+   piaf
+   routes
+   eio_main
+   caqti-driver-postgresql
+   logs.fmt
+   fmt.tty
+   logs.threaded
+   caqti-eio
+   caqti
+   ppx_rapper_eio)
+
+ (preprocess
+  (pps ppx_rapper)))
