@@ -45,6 +45,19 @@ module Q = struct
           SELECT @int{value}, @ptime{now()} as time FROM balances WHERE client_id = %int{client_id}
         |sql}]
   ;;
+
+  let transactions =
+    let open Operation in
+    [%rapper
+      get_many
+        {sql|
+          SELECT @int{id}, @int{client_id}, @int{value}, type as @Operation.TransactionType{transaction_type}, @string{description}, @ptime{created_at} FROM transactions
+          WHERE transactions.client_id = %int{client_id}
+          ORDER BY created_at DESC
+          LIMIT 10
+        |sql}
+        record_out]
+  ;;
 end
 
 let ( let* ) = Result.bind
@@ -66,3 +79,4 @@ let execute_transaction ~client_id ~(op : Operation.transaction_op) conn =
 
 let find_client id conn = Q.client ~id conn
 let balance client_id conn = Q.balance ~client_id conn
+let transactions client_id conn = Q.transactions ~client_id conn

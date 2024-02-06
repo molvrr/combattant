@@ -2,7 +2,7 @@ open Piaf
 
 let valid_debit value limit balance =
   let balance_after_op = balance - value in
-  not (balance_after_op <= limit * -1)
+  not (balance_after_op < limit * -1)
 ;;
 
 let create_transaction client_id (db_pool : Query.pool) (request : Request.t) =
@@ -73,7 +73,11 @@ let get_balance client_id (db_pool : Query.pool) (_request : Request.t) =
                let limit = `Int client.mov_limit in
                `Assoc [ "total", total; "data_extrato", date; "limite", limit ]
              in
-             let last_transactions = `List [] in
+             let t =
+               Result.fold ~ok:Fun.id ~error:(fun _ -> [])
+               @@ Query.transactions client_id conn
+             in
+             let last_transactions = `List (List.map Serializer.transaction t) in
              `Assoc [ "saldo", balance; "ultimas_transacoes", last_transactions ]
            in
            Ok (Response.of_string ~body:(Yojson.Safe.to_string json) `OK)
