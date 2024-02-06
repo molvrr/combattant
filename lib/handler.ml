@@ -8,6 +8,10 @@ let valid_debit value limit balance =
 let create_transaction client_id (db_pool : Query.pool) (request : Request.t) =
   Caqti_eio.Pool.use
     (fun conn ->
+      let module C = (val conn : Rapper_helper.CONNECTION) in
+      C.with_transaction
+      @@ fun () ->
+      let _ = Query.lock client_id conn in
       let client_opt =
         Option.join @@ Result.to_option @@ Query.find_client client_id conn
       in

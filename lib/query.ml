@@ -58,6 +58,14 @@ module Q = struct
         |sql}
         record_out]
   ;;
+
+  let lock =
+    [%rapper
+      execute
+        {sql|
+          SELECT pg_advisory_xact_lock(%int{client_id})
+        |sql}]
+  ;;
 end
 
 let ( let* ) = Result.bind
@@ -80,3 +88,4 @@ let execute_transaction ~client_id ~(op : Operation.transaction_op) conn =
 let find_client id conn = Q.client ~id conn
 let balance client_id conn = Q.balance ~client_id conn
 let transactions client_id conn = Q.transactions ~client_id conn
+let lock client_id conn = Q.lock ~client_id conn
