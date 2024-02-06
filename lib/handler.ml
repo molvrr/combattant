@@ -78,6 +78,7 @@ let get_balance client_id (db_pool : Query.pool) (_request : Request.t) =
                `Assoc [ "total", total; "data_extrato", date; "limite", limit ]
              in
              let t =
+               (* NOTE: Talvez isso aqui não seja uma boa ideia *)
                Result.fold ~ok:Fun.id ~error:(fun _ -> [])
                @@ Query.transactions client_id conn
              in

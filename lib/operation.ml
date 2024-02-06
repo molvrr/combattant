@@ -47,7 +47,7 @@ let decoder : transaction_op Utils.Decoder.decoder =
     <|> literal "d" *> return (fun p -> `Debit p)
   in
   (fun value transaction_type description -> transaction_type { value; description })
-  <$> ("valor" <: int)
+  <$> ("valor" <: (int >>= fun x -> if x >= 0 then return x else fail))
   <*> ("tipo" <: transaction_type_decoder)
   <*> ("descricao"
        <: (string
