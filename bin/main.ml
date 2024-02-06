@@ -9,7 +9,7 @@ let setup_log ?style_renderer level =
 ;;
 
 let request_handler ~db_pool Server.{ request; _ } =
-  match Rinha.Router.match_route request.meth request.target with
+  match Combattant.Router.match_route request.meth request.target with
   | Some handler -> Result.get_ok @@ handler db_pool request
   | None ->
     Logs.info (fun d -> d "Não encontrei %S\n" request.target);
@@ -29,7 +29,7 @@ let () =
   in
   let config = Server.Config.create config in
   let db_uri =
-    Uri.make ~scheme:"postgres" ~userinfo:"admin:123" ~host:"db" ~path:"rinha" ()
+    Uri.make ~scheme:"postgres" ~userinfo:"admin:123" ~host:"db" ~path:"combattant" ()
   in
   let db_pool =
     Result.get_ok

@@ -2,7 +2,7 @@ version: '3.5'
 
 services:
   api01: &api
-    image: rinha:latest
+    image: ghcr.io/molvrr/combattant:latest
     environment:
       - DB_HOST=db
     depends_on:
@@ -39,7 +39,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=123
       - POSTGRES_USER=admin
-      - POSTGRES_DB=rinha
+      - POSTGRES_DB=combattant
     ports:
       - "5432:5432"
     volumes:

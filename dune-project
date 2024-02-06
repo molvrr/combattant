@@ -1,6 +1,6 @@
 (lang dune 3.13)
 
-(name rinha)
+(name combattant)
 
 (generate_opam_files true)
 
@@ -16,7 +16,7 @@
 (documentation https://url/to/documentation)
 
 (package
- (name rinha)
+ (name combattant)
  (synopsis "A short synopsis")
  (description "A longer description")
  (depends ocaml dune)

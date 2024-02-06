@@ -21,8 +21,8 @@
 
         pkgs' = pkgs.pkgsCross.musl64;
 
-        rinha = pkgs'.ocamlPackages.buildDunePackage {
-          pname = "rinha";
+        combattant = pkgs'.ocamlPackages.buildDunePackage {
+          pname = "combattant";
           version = "0.0.1";
           src = ./.;
           buildInputs = with pkgs'.ocamlPackages; [
@@ -50,21 +50,21 @@
             pkgs.openjdk17
           ];
 
-          buildInputs = rinha.buildInputs
+          buildInputs = combattant.buildInputs
             ++ (with pkgs'.ocamlPackages; [ utop ]);
         };
 
-        packages.default = rinha;
+        packages.default = combattant;
 
         packages.docker = pkgs.dockerTools.buildImage {
-          name = "rinha";
+          name = "ghcr.io/molvrr/combattant";
           tag = "latest";
           copyToRoot = pkgs.buildEnv {
             name = "image-root";
-            paths = [ pkgs.bashInteractive pkgs.coreutils pkgs.curl rinha ];
+            paths = [ pkgs.bashInteractive pkgs.coreutils pkgs.curl combattant ];
             pathsToLink = [ "/bin" ];
           };
-          config = { Cmd = [ "rinha" ]; };
+          config = { Cmd = [ "combattant" ]; };
         };
 
         formatter = pkgs.nixfmt;

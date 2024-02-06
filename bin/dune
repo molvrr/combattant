@@ -1,10 +1,10 @@
 (executable
- (public_name rinha)
+ (public_name combattant)
  (name main)
  (flags
    (:standard -cclib -static -cclib -no-pie))
  (libraries
-   rinha
+   combattant
    piaf
    routes
    eio_main

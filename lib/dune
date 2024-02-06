@@ -1,5 +1,5 @@
 (library
- (name rinha)
+ (name combattant)
  (libraries piaf routes yojson caqti caqti-driver-postgresql caqti-eio ppx_rapper_eio)
  (preprocess
   (pps ppx_rapper)))
