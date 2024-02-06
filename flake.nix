@@ -12,7 +12,8 @@
             ocamlPackages = super.ocaml-ng.ocamlPackages_5_1.overrideScope'
               (oself: osuper: {
                 pg_query = osuper.pg_query.overrideAttrs (prev: {
-                  propagatedBuildInputs = prev.propagatedBuildInputs ++ [ osuper.cmdliner ];
+                  propagatedBuildInputs = prev.propagatedBuildInputs
+                    ++ [ osuper.cmdliner ];
                 });
               });
           })
@@ -46,6 +47,7 @@
             ocaml
             ocaml-lsp
             ocamlformat
+            pkgs.openjdk17
           ];
 
           buildInputs = rinha.buildInputs
