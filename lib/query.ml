@@ -1,5 +1,3 @@
-type pool = ((module Rapper_helper.CONNECTION), Caqti_error.t) Caqti_eio.Pool.t
-
 module Q = struct
   let transaction =
     [%rapper
@@ -27,7 +25,7 @@ module Q = struct
   ;;
 
   let client =
-    let open Client in
+    let open Operation in
     [%rapper
       get_opt
         {sql|
@@ -61,8 +59,7 @@ module Q = struct
 
   let lock =
     [%rapper
-      execute
-        {sql|
+      execute {sql|
           SELECT pg_advisory_xact_lock(%int{client_id})
         |sql}]
   ;;

@@ -18,6 +18,12 @@ module TransactionType = struct
   ;;
 end
 
+type client =
+  { id : int
+  ; mov_limit : int
+  ; balance : int
+  }
+
 type transaction_payload =
   { value : int
   ; description : string
@@ -27,8 +33,6 @@ type transaction_op =
   [ `Credit of transaction_payload
   | `Debit of transaction_payload
   ]
-
-type t = Balance of { client_id : int }
 
 type transaction =
   { id : int
