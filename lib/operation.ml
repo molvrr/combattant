@@ -49,5 +49,9 @@ let decoder : transaction_op Utils.Decoder.decoder =
   (fun value transaction_type description -> transaction_type { value; description })
   <$> ("valor" <: int)
   <*> ("tipo" <: transaction_type_decoder)
-  <*> ("descricao" <: string)
+  <*> ("descricao"
+       <: (string
+           >>= fun s ->
+           let len = String.length s in
+           if len <= 10 && len >= 1 then return s else fail))
 ;;
