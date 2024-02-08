@@ -3,20 +3,16 @@ version: '3.5'
 services:
   api01: &api
     image: ghcr.io/molvrr/combattant:latest
-    environment:
-      - DB_HOST=db
     depends_on:
       - db
     deploy:
       resources:
         limits:
-          cpus: "0.20"
-          memory: "150mb"
+          cpus: "0.45"
+          memory: "50mb"
 
   api02:
     <<: *api
-    environment:
-      - DB_HOST=db
 
   nginx:
     image: nginx:latest
@@ -30,7 +26,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.17"
+          cpus: "0.20"
           memory: "110MB"
 
   db:
@@ -43,9 +39,9 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./script.sql:/docker-entrypoint-initdb.d/script.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     deploy:
       resources:
         limits:
-          cpus: "0.63"
-          memory: "140MB"
+          cpus: "0.40"
+          memory: "340MB"
