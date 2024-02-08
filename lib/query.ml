@@ -30,7 +30,7 @@ module Q = struct
       get_opt
         {sql|
           SELECT clients.id as @int{id}, @int{mov_limit}, value as @int{balance} FROM clients
-          JOIN balances ON balances.client_id = %int{id}
+          JOIN balances ON balances.client_id = clients.id
           WHERE clients.id = %int{id}
         |sql}
         record_out]
