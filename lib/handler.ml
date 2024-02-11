@@ -44,6 +44,12 @@ let create_transaction client_id (db_pool : pool) (request : Request.t) =
         in
         (match insert_result with
          | Ok () ->
+           let client =
+             Option.get
+             @@ Option.join
+             @@ Result.to_option
+             @@ Query.find_client client_id conn
+           in
            let json : Yojson.Safe.t =
              `Assoc [ "limite", `Int client.mov_limit; "saldo", `Int client.balance ]
            in
