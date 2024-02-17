@@ -1,0 +1,27 @@
+name: 'Load test'
+on:
+  push:
+
+jobs:
+  build:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: cachix/install-nix-action@v20
+    - uses: DeterminateSystems/magic-nix-cache-action@v2
+    - run: nix build -L .#docker
+    - run: nix develop -L -c dune runtest
+    - name: Log in to the Container registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - run: docker load < result
+    - run: |
+        wget https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/3.10.3/gatling-charts-highcharts-bundle-3.10.3-bundle.zip
+        unzip gatling-charts-highcharts-bundle-3.10.3-bundle.zip
+        mv gatling-charts-highcharts-bundle-3.10.3 gatling
+        docker compose up -d
+        ./test.sh
