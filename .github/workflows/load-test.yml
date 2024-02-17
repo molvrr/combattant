@@ -3,7 +3,7 @@ on:
   push:
 
 jobs:
-  build:
+  loadtest:
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
@@ -25,3 +25,21 @@ jobs:
         mv gatling-charts-highcharts-bundle-3.10.3 gatling
         docker compose up -d
         ./test.sh
+        docker compose exec -ti db psql -U admin combattant <<EOF
+          SELECT
+            c.name as cliente,
+            c.mov_limit as limite,
+            sum(case
+                  when t.type = 'credit'
+                      then t.value
+                  else t.value * -1
+            end)   as soma_transacoes,
+            b.value as saldo
+            from clients c
+            inner join transactions t
+            on c.id = t.client_id
+            inner join balances b
+            on b.client_id = t.client_id
+
+            group by c.name, c.mov_limit, b.value;
+        EOF
